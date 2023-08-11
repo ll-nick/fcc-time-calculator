@@ -8,20 +8,27 @@ weekdays = [
     "sunday"
 ]
 
+def add_12_hours(time_str):
+    return str(int(time_str.split(':')[0]) + 12) + ":" + time_str.split(':')[1]
+
+def to_24_hour_format(time_str):
+    if time_str.split()[1] == "PM":
+        time_str = add_12_hours(time_str)
+    return time_str.split()[0]
+
+def time_str_to_int(time_str):
+    hours, minutes = [int(str) for str in time_str.split(":")]
+    return hours * 60 + minutes
+
 def add_time(start, duration, weekday = None):
-    start_am = True if start.split()[1] == "AM" else False
-    start_hours, start_minutes = [int(str) for str in start.split()[0].split(":")]
+    start_24h = to_24_hour_format(start)
+    start_int = time_str_to_int(start_24h)
+    duration_int = time_str_to_int(duration)
 
-    start_acc = start_hours if start_am else start_hours + 12
-    start_acc *= 60
-    start_acc += start_minutes
+    new_time_int = start_int + duration_int
 
-    duration_hours, duration_minutes = [int(str) for str in duration.split(":")]
-    duration_acc = duration_hours * 60 + duration_minutes
-    new_time_acc = start_acc + duration_acc
-
-    new_time_hours = new_time_acc // 60
-    new_time_minutes = new_time_acc % 60
+    new_time_hours = new_time_int // 60
+    new_time_minutes = new_time_int % 60
 
     new_time_days = new_time_hours // 24
     new_time_hours -= new_time_days * 24
